@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-// TODO: Fragmentar esse form em componentes e testar se o state de useFormModal funciona com v-model desses componentes
+// TODO: Fragmentar esse form em um componente e testar se o state de useFormModal funciona com v-model e os métodos do mesmo com emits
 
 import { useModalController } from '../../composables/usoModalCotroller'
 import { useFormModal } from '../../composables/modals/modal-form/useModalForm'

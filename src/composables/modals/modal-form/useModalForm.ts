@@ -14,6 +14,8 @@ export interface ModalFormContext {
 
 const ModalFromSymbol = Symbol('ModalFormContext')
 
+// TODO: Fazer o state ser genérico (definido pelo pai)
+
 export function useFormModal() {
   const state = reactive({
     name: '',
