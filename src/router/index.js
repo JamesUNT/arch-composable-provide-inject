@@ -11,8 +11,8 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'Fruit Shop',
-          component: () => import('@/pages/fruit-shop-page/fruit-shop-page.vue'),
+          name: 'Form',
+          component: () => import('@/pages/form-page/form-page.vue'),
         },
       ],
     },
