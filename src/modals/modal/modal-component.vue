@@ -54,16 +54,24 @@
   </form>
   <button @click="open">Abrir</button>
   <button @click="close">Fechar</button>
+  <input type="text" name="teste" id="teste" v-model="state.name" />
 </template>
 
 <script setup lang="ts">
 // TODO: Fragmentar esse form em um componente e testar se o state de useFormModal funciona com v-model e os métodos do mesmo com emits
-
+import { reactive } from 'vue'
 import { useModalController } from '../../composables/usoModalCotroller'
 import { useFormModal } from '../../composables/modals/modal-form/useModalForm'
 
+const estado = reactive({
+  name: 'Thiago',
+  email: 'thiago@gmail.com',
+  gender: '',
+  country: '',
+})
+
 const { isOpen, close, open, getFunctionRef } = useModalController()
-const { state, reset } = useFormModal()
+const { state, reset } = useFormModal(estado)
 
 function auditar() {
   event.preventDefault()

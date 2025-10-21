@@ -1,37 +1,22 @@
-import { reactive, provide, inject } from 'vue'
+import { Reactive, reactive, provide, inject, toRaw } from 'vue'
 
-export interface FormData {
-  name: string
-  email: string
-  gender: string
-  country: string
-}
-
-export interface ModalFormContext {
-  state: FormData
+export interface ModalFormContext<T extends Record<string, unknown>> {
+  state: Reactive<T>
   reset(): void
 }
 
 const ModalFromSymbol = Symbol('ModalFormContext')
 
-// TODO: Fazer o state ser genérico (definido pelo pai)
-
-export function useFormModal() {
-  const state = reactive({
-    name: '',
-    email: '',
-    gender: '',
-    country: '',
-  })
+export function useFormModal<T extends Record<string, unknown>>(initial: Reactive<T>) {
+  // const state = reactive((initial) as T) // Reativo na mudança do initial
+  const state = reactive(structuredClone(toRaw(initial) as T))
+  const initialCopy = structuredClone(toRaw(initial) as T)
 
   function reset() {
-    state.name = ''
-    state.email = ''
-    state.gender = ''
-    state.country = ''
+    Object.assign(state, initialCopy)
   }
 
-  provide(ModalFromSymbol, {
+  provide<ModalFormContext<T>>(ModalFromSymbol, {
     state,
     reset,
   })
@@ -39,8 +24,8 @@ export function useFormModal() {
   return { state, reset }
 }
 
-export function useModalContext() {
-  const context = inject<ModalFormContext>(ModalFromSymbol)
+export function useModalContext<T extends Record<string, unknown>>() {
+  const context = inject<ModalFormContext<T>>(ModalFromSymbol)
   if (!context) throw new Error('useModalFormContext() must be used inside Form')
   return context
 }

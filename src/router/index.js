@@ -12,7 +12,7 @@ const router = createRouter({
         {
           path: '',
           name: 'Form',
-          component: () => import('@/pages/form-page/form-page.vue'),
+          component: () => import('@/pages/form/form-page.vue'),
         },
       ],
     },
