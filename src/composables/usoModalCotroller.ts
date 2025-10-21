@@ -1,4 +1,4 @@
-import { Ref, ref, reactive, onBeforeUpdate, provide, inject } from 'vue'
+import { Ref, ref, onBeforeUpdate, provide, inject } from 'vue'
 
 export interface ModalContext {
   isOpen: Ref<boolean>

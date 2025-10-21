@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, provide, inject } from 'vue'
 
 export interface FormData {
   name: string
@@ -6,6 +6,13 @@ export interface FormData {
   gender: string
   country: string
 }
+
+export interface ModalFormContext {
+  state: FormData
+  reset(): void
+}
+
+const ModalFromSymbol = Symbol('ModalFormContext')
 
 export function useFormModal() {
   const state = reactive({
@@ -22,5 +29,16 @@ export function useFormModal() {
     state.country = ''
   }
 
+  provide(ModalFromSymbol, {
+    state,
+    reset,
+  })
+
   return { state, reset }
+}
+
+export function useModalContext() {
+  const context = inject<ModalFormContext>(ModalFromSymbol)
+  if (!context) throw new Error('useModalFormContext() must be used inside Form')
+  return context
 }
