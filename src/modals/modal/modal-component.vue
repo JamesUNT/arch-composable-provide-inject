@@ -75,7 +75,7 @@ const estado = reactive<FormData>({
 })
 
 const { isOpen, close, open, getFunctionRef } = useModalController()
-const { state, reset, isFilled, camposNaoPreenchidos, getFunctionModalRef } = useModalForm(estado)
+const { state, camposNaoPreenchidos, reset, isFilled, getFunctionModalRef } = useModalForm(estado)
 
 function realizarRequisicao(event) {
   event.preventDefault()
