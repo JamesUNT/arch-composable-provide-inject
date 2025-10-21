@@ -2,15 +2,15 @@ import { Ref, ref, onBeforeUpdate, provide, inject } from 'vue'
 
 export interface ModalContext {
   isOpen: Ref<boolean>
-  open(event: Event): void
-  close(event: Event): void
+  open(): void
+  close(): void
   getFunctionRef(index: string): (el: HTMLElement | null) => void
 }
 
 const ModalSymbol = Symbol('ModalContext')
 
 export function useModalController(): ModalContext {
-  const isOpen = ref(true)
+  const isOpen = ref(false)
 
   // refs para partes do modal
   const elements = ref<Record<string, HTMLElement>>({})
@@ -25,35 +25,11 @@ export function useModalController(): ModalContext {
     elements.value = {}
   })
 
-  function open(event: Event) {
-    event.preventDefault()
+  function open() {
     isOpen.value = true
   }
 
-  function close(event: Event) {
-    event.preventDefault()
-    let camposNaoPreenchidos = []
-    Object.keys(elements.value).forEach((id) => {
-      const element = elements.value[id]
-      if (
-        element instanceof HTMLInputElement ||
-        element instanceof HTMLSelectElement ||
-        element instanceof HTMLTextAreaElement
-      ) {
-        element
-        if (element.value === '') {
-          camposNaoPreenchidos.push(element.title || id)
-          return
-        }
-      }
-    })
-
-    if (camposNaoPreenchidos.length !== 0) {
-      alert(
-        `Existem alterações não preenchidas no campo: ${camposNaoPreenchidos.map((campos) => ` \n${campos}`)}`,
-      )
-      return
-    }
+  function close() {
     isOpen.value = false
   }
 

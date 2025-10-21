@@ -1,11 +1,5 @@
 <template>
-  <form
-    v-if="isOpen"
-    class="form-section"
-    id="form"
-    title="Formulário"
-    :ref="getFunctionRef('form')"
-  >
+  <form-component v-if="isOpen" titulo="Formulário renderless">
     <div class="form-group">
       <label for="name">Nome:</label>
       <input
@@ -22,7 +16,7 @@
       <input
         id="email"
         title="E-mail"
-        :ref="getFunctionRef('email')"
+        :ref="getFunctionModalRef('email')"
         v-model="state.email"
         type="text"
       />
@@ -30,7 +24,12 @@
 
     <div class="form-group">
       <label for="gender">Gênero:</label>
-      <select id="gender" title="Gênero" :ref="getFunctionRef('gender')" v-model="state.gender">
+      <select
+        id="gender"
+        title="Gênero"
+        :ref="getFunctionModalRef('gender')"
+        v-model="state.gender"
+      >
         <option value="">Selecione</option>
         <option value="male">Masculino</option>
         <option value="female">Feminino</option>
@@ -40,30 +39,35 @@
 
     <div class="form-group">
       <label for="country">País:</label>
-      <select id="country" title="País" :ref="getFunctionRef('country')" v-model="state.country">
+      <select
+        id="country"
+        title="País"
+        :ref="getFunctionModalRef('country')"
+        v-model="state.country"
+      >
         <option value="">Selecione</option>
         <option value="br">Brasil</option>
         <option value="us">Estados Unidos</option>
         <option value="fr">França</option>
       </select>
     </div>
-
     <footer>
-      <button @click="auditar">Auditar no Console & limpar</button>
+      <button @click="realizarRequisicao">Salvar & limpar</button>
     </footer>
-  </form>
+  </form-component>
   <button @click="open">Abrir</button>
-  <button @click="close">Fechar</button>
-  <input type="text" name="teste" id="teste" v-model="state.name" />
+  <button @click="fecharModal">Fechar</button>
+  <input type="text" name="teste" id="teste" v-model="estado.name" />
 </template>
 
 <script setup lang="ts">
-// TODO: Fragmentar esse form em um componente e testar se o state de useFormModal funciona com v-model e os métodos do mesmo com emits
-import { reactive } from 'vue'
+import { onMounted, reactive } from 'vue'
+import { FormData } from './modal-model'
 import { useModalController } from '../../composables/usoModalCotroller'
-import { useFormModal } from '../../composables/modals/modal-form/useModalForm'
+import { useModalForm } from '../../composables/useForm'
+import formComponent from '@/components/form/form-component.vue'
 
-const estado = reactive({
+const estado = reactive<FormData>({
   name: 'Thiago',
   email: 'thiago@gmail.com',
   gender: '',
@@ -71,13 +75,28 @@ const estado = reactive({
 })
 
 const { isOpen, close, open, getFunctionRef } = useModalController()
-const { state, reset } = useFormModal(estado)
+const { state, reset, isFilled, camposNaoPreenchidos, getFunctionModalRef } = useModalForm(estado)
 
-function auditar() {
+function realizarRequisicao(event) {
   event.preventDefault()
-  console.log(state)
+  alert(
+    `formulário enviado com sucesso! Form: ${Object.keys(state).map((key) => `\n${key} : ${state[key]}`)}`,
+  )
   reset()
 }
+
+function fecharModal() {
+  console.log(estado)
+  isFilled()
+    ? close()
+    : alert(
+        `Ainda há campos a serem preenchidos: ${camposNaoPreenchidos.value.map((el) => `\n ${el}`)}`,
+      )
+}
+
+onMounted(() => {
+  open()
+})
 </script>
 
 <style scoped>
