@@ -49,6 +49,7 @@ export function useModalForm<T extends Record<string, string>>(initial: Reactive
 
   onBeforeUpdate(() => {
     elements.value = {}
+    camposNaoPreenchidos.value = []
   })
 
   provide<ModalFormContext<T>>(ModalFromSymbol, {
