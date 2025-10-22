@@ -1,12 +1,12 @@
 <template>
-  <form-component v-if="isOpen" titulo="Formulário renderless">
+  <form-component v-model="estado" titulo="Formulário renderless">
     <div class="form-group">
       <label for="name">Nome:</label>
       <input
         id="name"
         title="Nome"
-        :ref="getFunctionRef('name')"
-        v-model="state.name"
+        :ref="getFunctionModalRef('name')"
+        v-model="estado.name"
         type="text"
       />
     </div>
@@ -17,7 +17,7 @@
         id="email"
         title="E-mail"
         :ref="getFunctionModalRef('email')"
-        v-model="state.email"
+        v-model="estado.email"
         type="text"
       />
     </div>
@@ -28,7 +28,7 @@
         id="gender"
         title="Gênero"
         :ref="getFunctionModalRef('gender')"
-        v-model="state.gender"
+        v-model="estado.gender"
       >
         <option value="">Selecione</option>
         <option value="male">Masculino</option>
@@ -43,7 +43,7 @@
         id="country"
         title="País"
         :ref="getFunctionModalRef('country')"
-        v-model="state.country"
+        v-model="estado.country"
       >
         <option value="">Selecione</option>
         <option value="br">Brasil</option>
@@ -65,7 +65,7 @@ import { onMounted, reactive } from 'vue'
 import { FormData } from './modal-model'
 import { useModalController } from '../../composables/usoModalCotroller'
 import { useModalForm } from '../../composables/useForm'
-import formComponent from '@/components/form/form-component.vue'
+import formComponent from '../../components/form/form-component.vue'
 
 const estado = reactive<FormData>({
   name: 'Thiago',
@@ -74,24 +74,27 @@ const estado = reactive<FormData>({
   country: '',
 })
 
-const { isOpen, close, open, getFunctionRef } = useModalController()
-const { state, camposNaoPreenchidos, reset, isFilled, getFunctionModalRef } = useModalForm(estado)
+const { open, close } = useModalController()
+const { camposNaoPreenchidos, reset, isFilled, getFunctionModalRef } = useModalForm(estado)
 
 function realizarRequisicao(event) {
   event.preventDefault()
   alert(
-    `formulário enviado com sucesso! Form: ${Object.keys(state).map((key) => `\n${key} : ${state[key]}`)}`,
+    `formulário enviado com sucesso! Form: ${Object.keys(estado).map((key) => `\n${key} : ${estado[key]}`)}`,
   )
   reset()
 }
 
 function fecharModal() {
-  console.log(estado)
-  isFilled()
-    ? close()
-    : alert(
-        `Ainda há campos a serem preenchidos: ${camposNaoPreenchidos.value.map((el) => `\n ${el}`)}`,
-      )
+  if (isFilled()) {
+    close()
+    reset()
+    console.log('entrou')
+    return
+  }
+  alert(
+    `Ainda há campos a serem preenchidos: ${camposNaoPreenchidos.value.map((el) => `\n ${el}`)}`,
+  )
 }
 
 onMounted(() => {

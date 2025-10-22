@@ -1,7 +1,6 @@
-import { Reactive, reactive, provide, inject, toRaw, ref, onBeforeUpdate, Ref } from 'vue'
+import { Reactive, provide, inject, toRaw, ref, onBeforeUpdate, Ref } from 'vue'
 
-export interface ModalFormContext<T extends Record<string, string>> {
-  state: Reactive<T>
+export interface ModalFormContext {
   reset(): void
   isFilled(): boolean
   camposNaoPreenchidos: Ref<string[]>
@@ -10,10 +9,9 @@ export interface ModalFormContext<T extends Record<string, string>> {
 
 const ModalFromSymbol = Symbol('ModalFormContext')
 
-export function useModalForm<T extends Record<string, string>>(initial: Reactive<T>) {
-  // const state = reactive<T>(toRaw(initial) as T) // Reativo na mudança do initial
-  const state = reactive<T>(structuredClone(toRaw(initial) as T))
-  const initialCopy = structuredClone(toRaw(initial) as T)
+export function useModalForm<T extends Record<string, string>>(data: Reactive<T>) {
+  const state = data
+  const initialCopy = structuredClone(toRaw(data) as T)
 
   // refs para partes do modal
   const elements = ref<Record<string, HTMLElement>>({})
@@ -31,6 +29,7 @@ export function useModalForm<T extends Record<string, string>>(initial: Reactive
   }
 
   const isFilled = () => {
+    camposNaoPreenchidos.value = []
     Object.keys(elements.value).forEach((id) => {
       const el = elements.value[id]
 
@@ -52,19 +51,18 @@ export function useModalForm<T extends Record<string, string>>(initial: Reactive
     camposNaoPreenchidos.value = []
   })
 
-  provide<ModalFormContext<T>>(ModalFromSymbol, {
-    state,
+  provide<ModalFormContext>(ModalFromSymbol, {
     reset,
     isFilled,
     camposNaoPreenchidos,
     getFunctionModalRef,
   })
 
-  return { state, isFilled, reset, camposNaoPreenchidos, getFunctionModalRef }
+  return { isFilled, reset, camposNaoPreenchidos, getFunctionModalRef }
 }
 
-export function useModalFormContext<T extends Record<string, string>>() {
-  const context = inject<ModalFormContext<T>>(ModalFromSymbol)
+export function useModalFormContext() {
+  const context = inject<ModalFormContext>(ModalFromSymbol)
   if (!context) throw new Error('useModalFormContext() must be used inside Form')
   return context
 }

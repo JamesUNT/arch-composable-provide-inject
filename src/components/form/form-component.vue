@@ -5,7 +5,7 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useModalContext } from '../../composables/usoModalCotroller'
 
 defineProps({
