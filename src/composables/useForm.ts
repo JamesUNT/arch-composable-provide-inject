@@ -1,6 +1,7 @@
 import { Reactive, provide, inject, toRaw, ref, onBeforeUpdate, Ref } from 'vue'
 
 export interface ModalFormContext {
+  elements: Ref<Record<string, HTMLElement>>
   reset(): void
   isFilled(): boolean
   camposNaoPreenchidos: Ref<string[]>
@@ -52,13 +53,14 @@ export function useModalForm<T extends Record<string, string>>(data: Reactive<T>
   })
 
   provide<ModalFormContext>(ModalFromSymbol, {
+    elements,
     reset,
     isFilled,
     camposNaoPreenchidos,
     getFunctionModalRef,
   })
 
-  return { isFilled, reset, camposNaoPreenchidos, getFunctionModalRef }
+  return { elements, isFilled, reset, camposNaoPreenchidos, getFunctionModalRef }
 }
 
 export function useModalFormContext() {

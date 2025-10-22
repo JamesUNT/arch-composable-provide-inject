@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { nextTick, onMounted, reactive } from 'vue'
 import { FormData } from './modal-model'
 import { useModalController } from '../../composables/usoModalCotroller'
 import { useModalForm } from '../../composables/useForm'
@@ -75,14 +75,20 @@ const estado = reactive<FormData>({
 })
 
 const { open, close } = useModalController()
-const { camposNaoPreenchidos, reset, isFilled, getFunctionModalRef } = useModalForm(estado)
+const { elements, camposNaoPreenchidos, reset, isFilled, getFunctionModalRef } =
+  useModalForm(estado)
 
 function realizarRequisicao(event) {
   event.preventDefault()
+  if (isFilled()) {
+    alert(
+      `formulário enviado com sucesso! Form: ${Object.keys(estado).map((key) => `\n${key} : ${estado[key]}`)}`,
+    )
+    reset()
+  }
   alert(
-    `formulário enviado com sucesso! Form: ${Object.keys(estado).map((key) => `\n${key} : ${estado[key]}`)}`,
+    `Ainda há campos a serem preenchidos: ${camposNaoPreenchidos.value.map((el) => `\n ${el}`)}`,
   )
-  reset()
 }
 
 function fecharModal() {
@@ -97,8 +103,10 @@ function fecharModal() {
   )
 }
 
-onMounted(() => {
+onMounted(async () => {
   open()
+  await nextTick()
+  elements.value['name'].focus()
 })
 </script>
 
