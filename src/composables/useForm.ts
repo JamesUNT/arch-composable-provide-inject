@@ -10,7 +10,7 @@ export interface ModalFormContext {
 
 const ModalFromSymbol = Symbol('ModalFormContext')
 
-export function useModalForm<T extends Record<string, string>>(data: Reactive<T>) {
+export function useModalForm<T extends Record<string, unknown>>(data: Reactive<T>) {
   const state = data
   const initialCopy = structuredClone(toRaw(data) as T)
 
@@ -20,7 +20,7 @@ export function useModalForm<T extends Record<string, string>>(data: Reactive<T>
   const camposNaoPreenchidos = ref<string[]>([])
 
   function getFunctionModalRef(id: string) {
-    return (el: HTMLElement) => {
+    return (el: HTMLElement | null) => {
       if (el) elements.value[id] = el
     }
   }
